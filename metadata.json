@@ -1,0 +1,40 @@
+{
+    "$schema": "https://go.kicad.org/pcm/schemas/v1",
+    "name": "Place By Sch",
+    "description": "Plugin to place footprints in PCB from schematic positions.",
+    "description_full": "Place By Sch is a KiCad plugin that allows users to place footprints in the PCB layout based on their positions in the schematic. This tool helps streamline the PCB design process by ensuring that components are positioned logically and efficiently according to the schematic layout. It is particularly useful for complex designs where manual placement can be time-consuming and error-prone.",
+    "identifier": "com.github.sagarHackeD.PlaceBySchKiCad",
+    "type": "plugin",
+    "author": {
+        "name": "Sagar Naik",
+        "contact": {
+            "github": "https://github.com/sagarHackeD"
+        }
+    },
+    "maintainer": {
+        "name": "Sagar Naik",
+        "contact": {
+            "github": "https://github.com/sagarHackeD"
+        }
+    },
+    "license": "GPL-3.0",
+    "resources": {
+        "homepage": "https://github.com/sagarHackeD/Place_By_Sch_KiCad"
+    },
+    "tags": [
+        "shematics",
+        "placement",
+        "grid",
+        "footprint",
+        "snap",
+        "pcb",
+        "layout"
+    ],
+    "versions": [
+        {
+            "version": "1.0.0",
+            "status": "stable",
+            "kicad_version": "6.0"
+        }
+    ]
+}
