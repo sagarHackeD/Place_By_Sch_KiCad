@@ -1,10 +1,10 @@
 import pcbnew
 
-from PlaceBySch.debug import debug_msg
+from .debug import debug_msg
 
 def get_page_size(page):
     """get_page_size"""
-    
+
     if page == "A5":
         return 148, 210
     if page == "A4":

@@ -1,18 +1,14 @@
-"A KiCAD action plugin to snap components to the grid"
+"A KiCAD action plugin to move all footprints to match the schematic positions"
 
 import os
 
 import pcbnew
 import wx
 
-from PlaceBySch.s_expression_parser import S_ExpressionParser
-
-from PlaceBySch.draw_page import draw_a_page
-
-from PlaceBySch.debug import debug_msg
+from .draw_page import draw_a_page
+from .s_expression_parser import S_ExpressionParser
 
 sexparser = S_ExpressionParser()
-
 
 class PlaceBySch(pcbnew.ActionPlugin):
     "main class of action plugin"
@@ -151,7 +147,7 @@ class PlaceBySch(pcbnew.ActionPlugin):
                     footprint.SetPosition(
                         pcbnew.VECTOR2I(
                             pcbnew.FromMM(symbol["x_position"]),
-                            pcbnew.FromMM(symbol["y_position"] + (sheet_level * 220)), 
+                            pcbnew.FromMM(symbol["y_position"] + (sheet_level * 220)),
                         )
                     )
                     footprint.SetOrientationDegrees(symbol["rotation"])
@@ -169,12 +165,15 @@ class PlaceBySch(pcbnew.ActionPlugin):
     def Run(self):
         """Run the plugin"""
         board = pcbnew.GetBoard()
-        
-        if wx.MessageBox(
+
+        if (
+            wx.MessageBox(
                 "This will move all footprints to match the schematic positions. Continue?",
                 "Place By Sch",
                 wx.ICON_QUESTION | wx.YES_NO,
-            ) == wx.YES:
+            )
+            == wx.YES
+        ):
             sch_file_name = self.get_sch_file_name(board)
             self.place_footprints(board, sch_file_name)
 
