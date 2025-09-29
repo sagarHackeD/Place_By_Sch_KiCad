@@ -8,7 +8,12 @@ import wx
 from .draw_page import draw_a_page
 from .s_expression_parser import S_ExpressionParser
 
+from .paper_diamentions import get_paper_diamentions
+
+from .debug import debug_msg
+
 sexparser = S_ExpressionParser()
+
 
 class PlaceBySch(pcbnew.ActionPlugin):
     "main class of action plugin"
@@ -75,7 +80,11 @@ class PlaceBySch(pcbnew.ActionPlugin):
 
         for i in parsed:
             if i[0] == "paper":
-                paper = i[1].replace('"', "")
+                
+                paper_width, paper_height = get_paper_diamentions(i)
+
+                debug_msg(f"{paper_width=}, {paper_height=}")
+
             if i[0] == "symbol":
                 footprint = i
                 x_position = y_position = rotation = None
@@ -131,7 +140,11 @@ class PlaceBySch(pcbnew.ActionPlugin):
                                 }
                             )
 
-        return {"paper": paper, "symbols": symbols, "sheet_files": sheet_files}
+        return {
+            "paper": {"paper_height": paper_height, "paper_width": paper_width},
+            "symbols": symbols,
+            "sheet_files": sheet_files,
+        }
 
     def set_footprints_positions(self, _board, sch_page_data, sheet_level):
         """set_footprints_positions"""
@@ -168,8 +181,8 @@ class PlaceBySch(pcbnew.ActionPlugin):
 
         if (
             wx.MessageBox(
-                "This will move all footprints to match the schematic positions. Continue?",
-                "Place By Sch",
+                "This will move all selected and not locked footprints to match the schematic positions. Continue?",
+                "Place By Schematics",
                 wx.ICON_QUESTION | wx.YES_NO,
             )
             == wx.YES
@@ -178,7 +191,6 @@ class PlaceBySch(pcbnew.ActionPlugin):
             self.place_footprints(board, sch_file_name)
 
 
-# PlaceBySch().register()  # Instantiate and register to PCB editor
 # For debugging outside of KiCAD
 
 if __name__ == "__main__":
@@ -190,7 +202,5 @@ if __name__ == "__main__":
     # pbs.place_hirachical_sheet_footprints(_board, SCH_NAME)
     # sheet_level = 1
     # sch_pos = pbs.get_symbols_positions(SCH_NAME)
-    # self.debug_msg(sch_pos)
     pbs.place_footprints(_board, SCH_NAME)
-
     # print(pbs.get_symbols_positions(SCH_NAME))
