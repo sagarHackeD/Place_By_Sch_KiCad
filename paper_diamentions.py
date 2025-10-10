@@ -1,5 +1,5 @@
 
-from .debug import debug_msg
+from .wx_gui import debug_msg
 
 
 def get_paper_diamentions(page_data):
