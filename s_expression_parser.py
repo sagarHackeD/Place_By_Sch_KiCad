@@ -1,7 +1,6 @@
 import re
 
-
-class S_ExpressionParser():
+class S_ExpressionParser:
     "A simple S-expression parser."
 
     def __tokenize(self, s):
