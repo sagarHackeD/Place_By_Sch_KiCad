@@ -163,3 +163,5 @@ cython_debug/
 log.txt
 test_without_pcbnew.py
 .vscode/launch.json
+kicad-package-metadata.json
+kicad-package.zip
