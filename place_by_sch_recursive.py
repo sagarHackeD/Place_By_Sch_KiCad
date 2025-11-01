@@ -1,14 +1,12 @@
 "A KiCAD action plugin to move all footprints to match the schematic positions"
 
 import os
-
 import pcbnew
 
 from .draw_page import draw_a_page
-
-from .get_symbole_data import get_sch_file_name, get_symbols_positions
+from .get_symbol_data import get_sch_file_name, get_symbols_positions
 from .set_positions import set_footprints_positions
-from .wx_gui import ask_to_run, debug_msg
+from .wx_gui import ask_to_run
 
 
 class PlaceBySch(pcbnew.ActionPlugin):
@@ -27,20 +25,10 @@ class PlaceBySch(pcbnew.ActionPlugin):
     ):
         """place_footprints"""
         sch_page_data = get_symbols_positions(sheet_file_path)
-
-        with open(r"C:\Users\ECHS\Documents\KiCad\9.0\scripting\plugins\Place_By_Sch_KiCad\log.txt", "a") as log_file:
-            log_file.write(f"\n{sheet_file_path=}\n")
-            log_file.write(f"{sch_page_data=}\n")
-            
-        # debug_msg(f" before -> {page_start_position=}")
-
         draw_a_page(_board, sch_page_data["paper"], page_start_position)
-
         page_start_position = set_footprints_positions(
-            _board, sch_page_data, page_start_position, sheet_level
+            _board, sch_page_data, page_start_position
         )
-
-        # debug_msg(f" after -> {page_start_position=}")
 
         if len(sch_page_data["sheet_files"]) > 0:
             for h_sheet in sch_page_data["sheet_files"]:
@@ -57,18 +45,3 @@ class PlaceBySch(pcbnew.ActionPlugin):
         if ask_to_run():
             sch_file_name = get_sch_file_name(board)
             self.place_footprints(board, sch_file_name)
-
-
-# For debugging outside of KiCAD
-
-if __name__ == "__main__":
-    BRD_NAME = r"C:\Users\ECHS\Documents\KiCad\9.0\projects\action_plugin\action_plugin.kicad_pcb"
-    pbs = PlaceBySch()
-    SCH_NAME = get_sch_file_name(pcbnew.LoadBoard(BRD_NAME))
-    _board = pcbnew.LoadBoard(BRD_NAME)
-    # prj_dir = os.path.dirname(BRD_NAME)
-    # pbs.place_hirachical_sheet_footprints(_board, SCH_NAME)
-    # sheet_level = 1
-    # sch_pos = pbs.get_symbols_positions(SCH_NAME)
-    pbs.place_footprints(_board, SCH_NAME)
-    # print(pbs.get_symbols_positions(SCH_NAME))

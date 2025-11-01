@@ -1,12 +1,10 @@
 import os
 
 from .paper_diamentions import get_paper_diamentions
-from .wx_gui import debug_msg
-
-
 from .s_expression_parser import S_ExpressionParser
 
 sexparser = S_ExpressionParser()
+
 
 def get_sch_file_name(_board) -> str:
     """Return schematic file name"""
@@ -27,7 +25,7 @@ def get_symbols_positions(sch_file_name):
     for i in parsed:
         if i[0] == "paper":
             print(f"{i}")
-            paper_height,paper_width = get_paper_diamentions(i)
+            paper_height, paper_width = get_paper_diamentions(i)
 
             print(f"{paper_height=} {paper_width=}")
 
@@ -86,10 +84,9 @@ def get_symbols_positions(sch_file_name):
                             }
                         )
 
-    
     # debug_msg(f"{paper_width=}, {paper_height=}")
     # print(f"{paper_height=} {paper_width=}")
-    
+
     return {
         "paper": {"paper_height": paper_height, "paper_width": paper_width},
         "symbols": symbols,
@@ -97,8 +94,7 @@ def get_symbols_positions(sch_file_name):
     }
 
 
-
-def get_hirachical_sheetnames( sch_file_name) -> list:
+def get_hirachical_sheetnames(sch_file_name) -> list:
     """return a list of hierarchical sheet names and their positions"""
     with open(sch_file_name, encoding="utf8") as sch_file:
         parsed = sexparser.parse_s_expression(sch_file.read())
@@ -142,7 +138,4 @@ def get_hirachical_sheetnames( sch_file_name) -> list:
 if __name__ == "__main__":
     sch_name = r"C:\Users\ECHS\Documents\KiCad\9.0\projects\action_plugin\action_plugin.kicad_sch"
 
-
     print(get_symbols_positions(sch_name))
-
-    
