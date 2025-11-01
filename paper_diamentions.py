@@ -1,4 +1,3 @@
-
 from .wx_gui import debug_msg
 
 
@@ -34,9 +33,9 @@ def get_paper_diamentions(page_data):
     if page == "Legal":
         return 216, 356
     if page == "User":
-            width = float(page_data[2])
-            height = float(page_data[3])
-            return width, height
+        width = float(page_data[2])
+        height = float(page_data[3])
+        return height, width
 
     debug_msg(f"Unknown page size '{page}', defaulting to A4")
     # Default to A4

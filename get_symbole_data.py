@@ -21,11 +21,15 @@ def get_symbols_positions(sch_file_name):
     symbols = []
     sheet_files = []
 
+    paper_height = 210
+    paper_width = 297
+
     for i in parsed:
         if i[0] == "paper":
-            paper_width, paper_height = get_paper_diamentions(i)
+            print(f"{i}")
+            paper_height,paper_width = get_paper_diamentions(i)
 
-            debug_msg(f"{paper_width=}, {paper_height=}")
+            print(f"{paper_height=} {paper_width=}")
 
         if i[0] == "symbol":
             footprint = i
@@ -55,8 +59,6 @@ def get_symbols_positions(sch_file_name):
                 )
         if i[0] == "sheet":
             sheetname = None
-            paper_height = 0
-            paper_width = 0
 
             for sheet in i:
                 if sheet[0] == "property" and sheet[1] == '"Sheetname"':
@@ -84,6 +86,10 @@ def get_symbols_positions(sch_file_name):
                             }
                         )
 
+    
+    # debug_msg(f"{paper_width=}, {paper_height=}")
+    # print(f"{paper_height=} {paper_width=}")
+    
     return {
         "paper": {"paper_height": paper_height, "paper_width": paper_width},
         "symbols": symbols,
@@ -131,3 +137,12 @@ def get_hirachical_sheetnames( sch_file_name) -> list:
                     )
 
     return sheet_files
+
+
+if __name__ == "__main__":
+    sch_name = r"C:\Users\ECHS\Documents\KiCad\9.0\projects\action_plugin\action_plugin.kicad_sch"
+
+
+    print(get_symbols_positions(sch_name))
+
+    
