@@ -1,10 +1,11 @@
 ﻿# Place_By_Sch_KiCad
 
-**Place_By_Sch_KiCad** is a KiCad plugin that helps designers automatically place footprints on the PCB Editor according to their positions in the schematic.
+**Place_By_Sch_KiCad** is a KiCad plugin that helps designers automatically place footprints on the PCB Editor according to their positions in the schematic. with nested hirachical sheet support.
 
 ## Features
 
 - Places footprints in the PCB Editor based on their schematic positions
+- It suports nested hirechical sheets 
 
 ## Installation
 1. Install from kiCad PCM
@@ -38,7 +39,7 @@
 
 ## License
 
-GPL 3.0
+GPL-3.0
 
 ## Contributing
 
@@ -48,3 +49,4 @@ Contributions, issues, and feature requests are welcome! Feel free to open an is
 
 
 **Author:** [sagarHackeD](https://github.com/sagarHackeD)
+
