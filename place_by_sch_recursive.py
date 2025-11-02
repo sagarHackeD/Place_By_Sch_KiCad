@@ -3,6 +3,8 @@
 import os
 import pcbnew
 
+from .add_title import add_page_title
+
 from .draw_page import draw_a_page
 from .get_symbol_data import get_sch_file_name, get_symbols_positions
 from .set_positions import set_footprints_positions
@@ -21,11 +23,12 @@ class PlaceBySch(pcbnew.ActionPlugin):
         self.icon_file_name = os.path.join(os.path.dirname(__file__), "icon.png")
 
     def place_footprints(
-        self, _board, sheet_file_path, page_start_position=0, sheet_level=0
+        self, _board, sheet_file_path,page_title='', page_start_position=0, sheet_level=0
     ):
         """place_footprints"""
         sch_page_data = get_symbols_positions(sheet_file_path)
         draw_a_page(_board, sch_page_data["paper"], page_start_position)
+        add_page_title(_board,page_start_position, page_title)
         page_start_position = set_footprints_positions(
             _board, sch_page_data, page_start_position
         )
@@ -34,7 +37,7 @@ class PlaceBySch(pcbnew.ActionPlugin):
             for h_sheet in sch_page_data["sheet_files"]:
                 sheet_level += 1
                 page_start_position = self.place_footprints(
-                    _board, h_sheet["sheet_path"], page_start_position, sheet_level
+                    _board, h_sheet["sheet_path"], h_sheet["sheet_name"], page_start_position, sheet_level
                 )
         return page_start_position
 

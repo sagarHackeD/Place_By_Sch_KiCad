@@ -1,5 +1,7 @@
 import pcbnew
 
+from .compatibility import VECTORIZE_MM
+
 def set_footprints_positions(_board, sch_page_data, page_start_position):
     """set_footprints_positions"""
 
@@ -13,7 +15,7 @@ def set_footprints_positions(_board, sch_page_data, page_start_position):
                 and not footprint.IsLocked()
             ):
                 footprint.SetPosition(
-                    pcbnew.VECTOR2I(
+                    VECTORIZE_MM(
                         pcbnew.FromMM(symbol["x_position"]),
                         pcbnew.FromMM(symbol["y_position"] + page_start_position),
                     )

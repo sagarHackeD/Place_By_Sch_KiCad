@@ -165,3 +165,5 @@ test_without_pcbnew.py
 .vscode/launch.json
 kicad-package-metadata.json
 kicad-package.zip
+package_dir/Downloaded-kicad-package.zip
+package_dir/generate_metadata.py

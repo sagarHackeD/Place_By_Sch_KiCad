@@ -1,3 +1,5 @@
+"""Get symbol data from schematic file."""
+
 import os
 
 from .paper_diamentions import get_paper_diamentions
@@ -84,9 +86,6 @@ def get_symbols_positions(sch_file_name):
                             }
                         )
 
-    # debug_msg(f"{paper_width=}, {paper_height=}")
-    # print(f"{paper_height=} {paper_width=}")
-
     return {
         "paper": {"paper_height": paper_height, "paper_width": paper_width},
         "symbols": symbols,
@@ -133,9 +132,3 @@ def get_hirachical_sheetnames(sch_file_name) -> list:
                     )
 
     return sheet_files
-
-
-if __name__ == "__main__":
-    sch_name = r"C:\Users\ECHS\Documents\KiCad\9.0\projects\action_plugin\action_plugin.kicad_sch"
-
-    print(get_symbols_positions(sch_name))
