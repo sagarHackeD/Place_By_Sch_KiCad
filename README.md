@@ -10,20 +10,9 @@
 ## Installation
 1. Install from kiCad PCM
 
-   Or
-
-1. Download or clone this repository:
-    ```sh
-    git clone https://github.com/sagarHackeD/Place_By_Sch_KiCad.git
-    ```
-2. Place the plugin folder inside your KiCad plugins directory.  
-   (Typically `~/.local/share/kicad/<version>/scripting/plugins/` on Linux or `%APPDATA%\kicad\<version>\scripting\plugins\` on Windows.)
-3. Restart KiCad.
-
 ## Requirements
 
-- **KiCad** version 6.0 or higher (recommended)
-- Python 3.x (if required by the plugin system)
+- **KiCad** version 6.0 or higher
 - No extra dependencies
 
 ## Usage
@@ -32,10 +21,7 @@
 2. Open the PCB Editor.
 3. Run the plugin from the Tools > External Plugins menu (or via the plugin manager).
 4. The plugin will automatically arrange footprints according to their positions in the schematic.
-
-## Example
-
-*Coming soon!*
+
 
 ## License
 
