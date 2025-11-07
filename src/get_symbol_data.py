@@ -27,7 +27,7 @@ def get_symbols_positions(sch_file_name):
     for i in parsed:
         if i[0] == "paper":
             print(f"{i}")
-            paper_height, paper_width = get_paper_diamentions(i)
+            paper_height, paper_width, orientation = get_paper_diamentions(i)
 
             print(f"{paper_height=} {paper_width=}")
 
