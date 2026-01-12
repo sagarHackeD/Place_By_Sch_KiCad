@@ -8,12 +8,12 @@ from .s_expression_parser import S_ExpressionParser
 sexparser = S_ExpressionParser()
 
 
-def get_sch_file_name(_board) -> str:
+def get_sch_file_name(board) -> str:
     """Return schematic file name"""
-    return _board.GetFileName().replace(".kicad_pcb", ".kicad_sch")
+    return board.GetFileName().replace(".kicad_pcb", ".kicad_sch")
 
 
-def get_symbols_positions(sch_file_name):
+def get_symbols_positions(sch_file_name, sheet_name="Main Sheet") -> dict:
     """return a list of symbols and their positions"""
     with open(sch_file_name, encoding="utf8") as sch_file:
         parsed = sexparser.parse_s_expression(sch_file.read())
@@ -27,7 +27,7 @@ def get_symbols_positions(sch_file_name):
     for i in parsed:
         if i[0] == "paper":
             print(f"{i}")
-            paper_height, paper_width, orientation = get_paper_diamentions(i)
+            paper_height, paper_width = get_paper_diamentions(i)
 
             print(f"{paper_height=} {paper_width=}")
 
@@ -58,11 +58,11 @@ def get_symbols_positions(sch_file_name):
                     }
                 )
         if i[0] == "sheet":
-            sheetname = None
+            h_sheetname = None
 
             for sheet in i:
                 if sheet[0] == "property" and sheet[1] == '"Sheetname"':
-                    sheetname = sheet[2].replace('"', "")
+                    h_sheetname = sheet[2].replace('"', "")
 
                 if sheet[0] == "property" and sheet[1] == '"Sheetfile"':
                     if sheet[3][0] == "at":
@@ -71,10 +71,10 @@ def get_symbols_positions(sch_file_name):
                         rotation = sheet[3][3]
                     else:
                         x_position = y_position = rotation = 0
-                    if sheetname is not None:
+                    if h_sheetname is not None:
                         sheet_files.append(
                             {
-                                "sheet_name": sheetname,
+                                "sheet_name": h_sheetname,
                                 "sheet_file": sheet[2].replace('"', ""),
                                 "sheet_path": os.path.join(
                                     os.path.dirname(sch_file_name),
@@ -87,6 +87,8 @@ def get_symbols_positions(sch_file_name):
                         )
 
     return {
+        "sheet_name": sheet_name,
+        "sheet_path": sch_file_name,
         "paper": {"paper_height": paper_height, "paper_width": paper_width},
         "symbols": symbols,
         "sheet_files": sheet_files,
@@ -104,14 +106,14 @@ def get_hirachical_sheetnames(sch_file_name) -> list:
         if item[0] != "sheet":
             continue
 
-        sheetname = None  # Initialize sheetname to avoid unbound error
+        sheet_name = None  # Initialize sheetname to avoid unbound error
 
         for sheet in item:
             # if not isinstance(sheet, list):
             #     continue
 
             if sheet[0] == "property" and sheet[1] == '"Sheetname"':
-                sheetname = sheet[2].replace('"', "")
+                sheet_name = sheet[2].replace('"', "")
 
             if sheet[0] == "property" and sheet[1] == '"Sheetfile"':
                 if sheet[3][0] == "at":
@@ -120,10 +122,10 @@ def get_hirachical_sheetnames(sch_file_name) -> list:
                     rotation = sheet[3][3]
                 else:
                     x_position = y_position = rotation = 0
-                if sheetname is not None:
+                if sheet_name is not None:
                     sheet_files.append(
                         {
-                            "sheet_name": sheetname,
+                            "sheet_name": sheet_name,
                             "sheet_file": sheet[2].replace('"', ""),
                             "x_position": x_position,
                             "y_position": y_position,
