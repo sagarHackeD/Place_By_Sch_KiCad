@@ -4,9 +4,8 @@ import os
 import pcbnew
 import wx
 
-from .add_title import add_page_title
 from .compatibility import VECTORIZE_MM
-from .draw_page import draw_a_page
+from .draw import draw_a_page, add_page_title
 from .pack import MaxRectsBin
 from .wx_gui import ActionDialog, debug_msg
 from .get_symbol_data import get_symbols_positions
