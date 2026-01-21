@@ -1,9 +1,9 @@
 {
     "$schema": "https://go.kicad.org/pcm/schemas/v1",
-    "name": "Snap To Grid",
-    "description": "Snap all selected footprints to the nearest grid point",
-    "description_full": "Snap all selected footprints to the nearest grid point. This is useful for quickly aligning multiple footprints to a grid.",
-    "identifier": "com.github.sagarHackeD.SnapToGridKiCAD",
+    "name": "Place By Sch",
+    "description": "Plugin to place footprints in PCB from schematic positions.",
+    "description_full": "Place By Sch is a KiCad plugin that allows users to place footprints in the PCB layout based on their positions in the schematic. This tool helps streamline the PCB design process by ensuring that components are positioned logically and efficiently according to the schematic layout. It is particularly useful for complex designs where manual placement can be time-consuming and error-prone.",
+    "identifier": "com.github.sagarHackeD.PlaceBySchKiCad",
     "type": "plugin",
     "author": {
         "name": "Sagar Naik",
@@ -19,22 +19,26 @@
     },
     "license": "GPL-3.0",
     "resources": {
-        "homepage": "https://github.com/sagarHackeD/Snap_To_Grid_KiCAD"
+        "homepage": "https://github.com/sagarHackeD/Place_By_Sch_KiCad"
     },
     "tags": [
-        "snap",
+        "shematics",
+        "placement",
+        "grid",
         "footprint",
-        "grid"
+        "snap",
+        "pcb",
+        "layout"
     ],
     "versions": [
         {
-            "version": "1.0.1",
+            "version": "2.0.0",
             "status": "stable",
             "kicad_version": "6.0",
-            "download_sha256": "236bbeaaab77988f716dd7d467bffe30ea00eb3c5f3ad7374795fa2191e19087",
-            "download_size": 9592,
-            "install_size": 11223,
-            "download_url": "https://github.com/sagarHackeD/Snap_To_Grid_KiCAD/releases/download/v1.0.1/kicad-package.zip"
+            "download_sha256": "916ce9c424bff13ad78418baddb35c179e717ce24c58ae43ec9cae3acf3e5acb",
+            "download_size": 15083,
+            "install_size": 31745,
+            "download_url": "https://github.com/sagarHackeD/Place_By_Sch_KiCad/releases/download/v2.0.0/kicad-package.zip"
         }
     ]
 }

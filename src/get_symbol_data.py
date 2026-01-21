@@ -2,6 +2,8 @@
 
 import os
 
+from .wx_gui import debug_msg
+
 from .paper_diamentions import get_paper_diamentions
 from .s_expression_parser import S_ExpressionParser
 
@@ -30,7 +32,6 @@ def get_symbols_positions(sch_file_name, sheet_name="Main Sheet") -> dict:
             paper_height, paper_width = get_paper_diamentions(i)
 
             print(f"{paper_height=} {paper_width=}")
-
         if i[0] == "symbol":
             footprint = i
             x_position = y_position = rotation = None
@@ -62,9 +63,11 @@ def get_symbols_positions(sch_file_name, sheet_name="Main Sheet") -> dict:
 
             for sheet in i:
                 if sheet[0] == "property" and sheet[1] == '"Sheetname"':
-                    h_sheetname = sheet[2].replace('"', "")
+                    h_sheetname = handle_spaceed_names(sheet)
 
                 if sheet[0] == "property" and sheet[1] == '"Sheetfile"':
+                    h_sheet_path = handle_spaceed_names(sheet)
+
                     if sheet[3][0] == "at":
                         x_position = sheet[3][1]
                         y_position = sheet[3][2]
@@ -75,10 +78,10 @@ def get_symbols_positions(sch_file_name, sheet_name="Main Sheet") -> dict:
                         sheet_files.append(
                             {
                                 "sheet_name": h_sheetname,
-                                "sheet_file": sheet[2].replace('"', ""),
+                                "sheet_file": h_sheet_path,
                                 "sheet_path": os.path.join(
                                     os.path.dirname(sch_file_name),
-                                    sheet[2].replace('"', ""),
+                                    h_sheet_path,
                                 ),
                                 "x_position": x_position,
                                 "y_position": y_position,
@@ -93,6 +96,18 @@ def get_symbols_positions(sch_file_name, sheet_name="Main Sheet") -> dict:
         "symbols": symbols,
         "sheet_files": sheet_files,
     }
+
+def handle_spaceed_names(sheet):
+    name_or_path = ""
+    c = 2
+    while 1:
+        try:
+            " ".join(sheet[2:c]).replace('"', "")
+            c += 1
+        except TypeError:
+            name_or_path = " ".join(sheet[2 : (c - 1)]).replace('"', "")
+            break
+    return name_or_path
 
 
 def get_hirachical_sheetnames(sch_file_name) -> list:

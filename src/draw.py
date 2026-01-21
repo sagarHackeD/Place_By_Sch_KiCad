@@ -6,9 +6,6 @@ from .compatibility import VECTORIZE_MM
 def draw_a_page(board, w, h, x, y, layer=pcbnew.Dwgs_User):
     """draw a rectangle"""
 
-    # if page_start_position == 0:
-    #     return
-
     page_height = h
     page_width = w
 
@@ -27,10 +24,6 @@ def add_page_title(board, x, y, title="", layer=pcbnew.Dwgs_User):
     """Add a page title text to the PCB at each page."""
 
     text = pcbnew.PCB_TEXT(board)
-    # text.SetText(title)
-    # text.SetPosition(
-    #     VECTORIZE_MM(pcbnew.FromMM(5), pcbnew.FromMM(page_start_position + 5))
-    # )
 
     text.SetText(title)
     text.SetPosition(VECTORIZE_MM(pcbnew.FromMM(x + 5), pcbnew.FromMM(y + 5)))
@@ -48,11 +41,11 @@ def add_page_title(board, x, y, title="", layer=pcbnew.Dwgs_User):
 def add_custom_layer():
     """Add a custom layer to the PCB."""
     board = pcbnew.GetBoard()
-    layer_id = pcbnew.User_1
+    layer_id = pcbnew.User_5
     enabled = board.GetEnabledLayers()
     enabled.AddLayer(layer_id)
     board.SetEnabledLayers(enabled)
-    board.SetLayerName(layer_id, "My_Custom_Layer")
+    board.SetLayerName(layer_id, "PlaceNySch")
     visible = board.GetVisibleLayers()
     visible.AddLayer(layer_id)
     board.SetVisibleLayers(visible)
