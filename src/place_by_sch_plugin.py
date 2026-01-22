@@ -1,6 +1,9 @@
 import json
+
+import wx
 import pcbnew
-from .wx_gui import debug_msg
+from .delete_drawings import delete_drawings_from_layer
+from .wx_gui import CheckListDialog, debug_msg
 
 from .compatibility import VECTORIZE_MM
 from .draw import draw_a_page, add_page_title
@@ -92,8 +95,6 @@ class PlaceBySchPlugin:
     def place(
         self,
         board,
-        packed_pages,
-        selected_sheets=None,
         checkbox_values=None,
         advance_mode=False,
         layer=pcbnew.User_15,
@@ -101,28 +102,56 @@ class PlaceBySchPlugin:
         """place_footprints"""
 
         offset = 0
-        intX = 0
-        intY = offset
+        int_x = 0
+        int_y = offset
 
-        if selected_sheets is None:
-            selected_sheets = []
+        delete_drawings_from_layer(board, layer)
 
-        self.move_all_footprints_out(board)
+        data = self.sch_to_dict(self.get_sch_file_name())
+        sorted_papers = sorted(
+            data,
+            key=lambda x: (x["paper"]["paper_height"], x["paper"]["paper_width"]),
+            reverse=True,
+        )
 
-        for page in packed_pages:
-            if page["sheet_name"] in selected_sheets or not advance_mode:
-                try:
-                    w = page["paper"]["paper_width"]
-                    h = page["paper"]["paper_height"]
-                    x = page["cordinates"][0] + intX
-                    y = page["cordinates"][1] + intY
+        selected_sheets = [paper["sheet_name"] for paper in sorted_papers]
 
-                    draw_a_page(board, w, h, x, y, layer)
-                    add_page_title(board, x, y, page["sheet_name"], layer)
-                    self.place_footprints(board, page, x, y, checkbox_values)
+        if advance_mode:
+            checklistdlg = CheckListDialog(None, selected_sheets)
+            if checklistdlg.ShowModal() == wx.ID_OK:
+                selected_sheets = checklistdlg.get_values()
+            checklistdlg.Destroy()
 
-                except Exception as e:
-                    debug_msg(f"Error processing {page['sheet_name']}: {e}")
+        packed_pages, all_packed = self.pack_pages(
+            sorted_papers, selected_sheets, advance_mode=True
+        )
+
+        if all_packed:
+            for page in packed_pages:
+                if page["sheet_name"] in selected_sheets or not advance_mode:
+                    try:
+                        w = page["paper"]["paper_width"]
+                        h = page["paper"]["paper_height"]
+                        x = page["cordinates"][0] + int_x
+                        y = page["cordinates"][1] + int_y
+
+                        draw_a_page(board, w, h, x, y, layer)
+                        add_page_title(board, x, y, page["sheet_name"], layer)
+                        self.place_footprints(board, page, x, y, checkbox_values)
+
+                    except Exception as e:
+                        debug_msg(f"Error processing {page['sheet_name']}: {e}")
+        else:
+            wx.MessageBox(
+                "Not all sheets could be placed on the board at a time. Please use the 'Advance' option to select specific sheets.",
+                "Packing Error",
+                wx.OK | wx.ICON_ERROR,  # ignore
+            )
+
+        # if selected_sheets is None:
+        #     selected_sheets = []
+
+        # self.move_all_footprints_out(board)
 
     def move_all_footprints_out(self, board):
         offset = 0

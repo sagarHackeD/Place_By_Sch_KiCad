@@ -8,10 +8,7 @@ import wx
 from .delete_drawings import delete_drawings_from_layer
 
 from .place_by_sch_plugin import PlaceBySchPlugin
-from .wx_gui import ActionDialog, CheckListDialog, ProgressDialog, debug_msg
-
-
-import json
+from .wx_gui import ActionDialog, CheckListDialog
 
 
 class PlaceBySch(pcbnew.ActionPlugin):
@@ -26,19 +23,51 @@ class PlaceBySch(pcbnew.ActionPlugin):
         self.icon_file_name = os.path.join(os.path.dirname(__file__), "icon.png")
 
     def Run(self):
+        board = pcbnew.GetBoard()
+        pbs_plugin = PlaceBySchPlugin(board)
+        action_dlg = ActionDialog(
+            None,
+            on_advance=lambda dlg: pbs_plugin.place(
+                board, dlg.get_checkbox_values(), advance_mode=True
+            ),
+            on_place=lambda dlg: pbs_plugin.place(
+                board, dlg.get_checkbox_values(), advance_mode=False
+            ),
+            on_clean=lambda dlg: delete_drawings_from_layer(board, layer=pcbnew.User_15),
+        )
+        result = action_dlg.ShowModal()
+        checkbox_values = action_dlg.get_checkbox_values()
+        self.custom_layer(board, pcbnew.User_15, "PlaceBySch")
+
+        if result == 1:  # Advance
+            pbs_plugin.place(board, checkbox_values, advance_mode=True)
+        elif result == 2:  # Place
+            pbs_plugin.place(board, checkbox_values, advance_mode=False)
+        elif result == 3:  # clean
+            delete_drawings_from_layer(board, layer=pcbnew.User_15)
+        else:  # Cancel
+            pass
+
+        action_dlg.Destroy()
+
+    def Run_old(self):
         """Run the plugin"""
         # Get the current board
         board = pcbnew.GetBoard()
         pbs_plugin = PlaceBySchPlugin(board)
 
-        dlg = ActionDialog(None)
+        dlg = ActionDialog(
+            None,
+            on_clean=lambda dlg: pbs_plugin.place(
+                board, dlg.get_checkbox_values(), advance_mode=True
+            ),
+        )
 
         result = dlg.ShowModal()
 
         checkbox_values = dlg.get_checkbox_values()
 
-        self.custom_layer(board,pcbnew.User_15,"PlaceBySch")
-
+        self.custom_layer(board, pcbnew.User_15, "PlaceBySch")
 
         if result == 1:  # Advance
             # progress_dlg = ProgressDialog(None)
@@ -66,7 +95,9 @@ class PlaceBySch(pcbnew.ActionPlugin):
                 sorted_papers, selected_sheets, advance_mode=True
             )
 
-            pbs_plugin.place(board, packed_pages, selected_sheets, checkbox_values, advance_mode=True)
+            pbs_plugin.place(
+                board, packed_pages, selected_sheets, checkbox_values, advance_mode=True
+            )
 
             # progress_dlg.Destroy()
 
@@ -92,8 +123,8 @@ class PlaceBySch(pcbnew.ActionPlugin):
                 sorted_papers, advance_mode=False
             )
 
-            with open(r"C:\Users\ECHS\Documents\KiCad\9.0\scripting\plugins\Place_By_Sch_KiCad\log.json","w",encoding="utf-8") as f:
-                f.write(json.dumps(packed_pages, indent=4))
+            # with open(r"C:\Users\ECHS\Documents\KiCad\9.0\scripting\plugins\Place_By_Sch_KiCad\log.json","w",encoding="utf-8") as f:
+            #     f.write(json.dumps(packed_pages, indent=4))
 
             if all_packed:
                 pbs_plugin.place(board, packed_pages, checkbox_values=checkbox_values)
@@ -113,15 +144,11 @@ class PlaceBySch(pcbnew.ActionPlugin):
 
         dlg.Destroy()
 
-    def custom_layer(self, board,layer,name):
+    def custom_layer(self, board, layer, name):
         lset = board.GetEnabledLayers()
         lset.AddLayer(layer)
         board.SetEnabledLayers(lset)
         board.SetLayerName(layer, name)
-
-
-
-
 
 
 #         import pcbnew
@@ -141,4 +168,3 @@ class PlaceBySch(pcbnew.ActionPlugin):
 # board.SetLayerName(pcbnew.User_1, "My_Custom_Layer")
 
 # pcbnew.Refresh()
-

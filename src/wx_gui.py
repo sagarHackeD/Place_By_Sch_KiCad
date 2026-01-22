@@ -1,5 +1,6 @@
 import os
 import wx
+import threading
 
 
 def ask_to_run():
@@ -27,10 +28,15 @@ def debug_msg(msg):
 
 
 class ActionDialog(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, on_advance=None, on_place=None, on_clean=None):
         super().__init__(parent, title="Place By Sch", size=(300, 200))
+        self.on_advance = on_advance
+        self.on_place = on_place
+        self.on_clean = on_clean
 
-        icon = wx.Icon(os.path.join(os.path.dirname(__file__), "icon.png"), wx.BITMAP_TYPE_PNG)
+        icon = wx.Icon(
+            os.path.join(os.path.dirname(__file__), "icon.png"), wx.BITMAP_TYPE_PNG
+        )
         self.SetIcon(icon)
 
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -80,10 +86,111 @@ class ActionDialog(wx.Dialog):
         vbox.Add(hbox, 0, wx.CENTER)
         self.SetSizerAndFit(vbox)
 
-        advance_btn.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(1))
-        place_btn.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(2))
-        clean_btn.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(3))
+        advance_btn.Bind(wx.EVT_BUTTON, lambda e: self.handle_advance())
+        place_btn.Bind(wx.EVT_BUTTON, lambda e: self.handle_place())
+        clean_btn.Bind(wx.EVT_BUTTON, lambda e: self.handle_clean())
         cancel_btn.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(wx.ID_CANCEL))
+
+    def handle_advance(self):
+        # Run the advance callback in a background thread and
+        # pulse the gauge via a wx.Timer so the UI stays responsive.
+        if not callable(self.on_advance):
+            return
+
+        # immediate visual feedback
+        self.gauge.Pulse()
+
+        # set up a timer to keep pulsing the gauge while work runs
+        self._advance_timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self._on_advance_timer, self._advance_timer)
+        self._advance_timer.Start(100)
+
+        def worker():
+            try:
+                self.on_advance(self)
+            except Exception:
+                pass
+            finally:
+                wx.CallAfter(self._finish_advance)
+
+        t = threading.Thread(target=worker, daemon=True)
+        t.start()
+
+    def _on_advance_timer(self, _event):
+        try:
+            self.gauge.Pulse()
+        except Exception:
+            pass
+
+    def _finish_advance(self):
+        try:
+            if hasattr(self, "_advance_timer") and self._advance_timer.IsRunning():
+                self._advance_timer.Stop()
+                try:
+                    self.Unbind(wx.EVT_TIMER, handler=self._on_advance_timer, source=self._advance_timer)
+                except Exception:
+                    pass
+        finally:
+            try:
+                self.EndModal(wx.ID_OK)
+            except Exception:
+                pass
+
+    def handle_place(self):
+        # Run the place callback in a background thread and
+        # pulse the gauge via a wx.Timer so the UI stays responsive.
+        if not callable(self.on_place):
+            return
+
+        # immediate visual feedback
+        self.gauge.Pulse()
+
+        # set up a timer to keep pulsing the gauge while work runs
+        self._place_timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self._on_place_timer, self._place_timer)
+        self._place_timer.Start(100)
+
+        def worker():
+            try:
+                self.on_place(self)
+            except Exception:
+                pass
+            finally:
+                wx.CallAfter(self._finish_place)
+
+        t = threading.Thread(target=worker, daemon=True)
+        t.start()
+
+    def _on_place_timer(self, _event):
+        try:
+            self.gauge.Pulse()
+        except Exception:
+            pass
+
+    def _finish_place(self):
+        try:
+            if hasattr(self, "_place_timer") and self._place_timer.IsRunning():
+                self._place_timer.Stop()
+                try:
+                    self.Unbind(wx.EVT_TIMER, handler=self._on_place_timer, source=self._place_timer)
+                except Exception:
+                    pass
+        finally:
+            try:
+                self.EndModal(wx.ID_OK)
+            except Exception:
+                pass
+
+    def handle_clean(self):
+        # provide immediate feedback
+        self.gauge.Pulse()
+        if callable(self.on_clean):
+            try:
+                self.on_clean(self)
+                self.EndModal(wx.ID_OK)
+            except Exception:
+                # Avoid crashing the dialog if callback raises
+                pass
 
     def get_checkbox_values(self):
         return [
@@ -110,7 +217,9 @@ class CheckListDialog(wx.Dialog):
     ):
         super().__init__(parent, title=title, size=size)
 
-        icon = wx.Icon(os.path.join(os.path.dirname(__file__), "icon.png"), wx.BITMAP_TYPE_PNG)
+        icon = wx.Icon(
+            os.path.join(os.path.dirname(__file__), "icon.png"), wx.BITMAP_TYPE_PNG
+        )
         self.SetIcon(icon)
 
         choices = choices or []
@@ -148,18 +257,3 @@ class CheckListDialog(wx.Dialog):
             self.sheet_checkboxs.GetString(i)
             for i in self.sheet_checkboxs.GetCheckedItems()
         ]
-
-
-class ProgressDialog(wx.Dialog):
-    def __init__(self, parent):
-        super().__init__(parent, title="Processing...", size=(300, 150))
-
-        panel = wx.Panel(self)
-        vbox = wx.BoxSizer(wx.VERTICAL)
-
-        self.gauge = wx.Gauge(panel, range=100, size=(250, 25))
-        vbox.Add(self.gauge, 0, wx.ALL | wx.CENTER, 15)
-
-        panel.SetSizer(vbox)
-
-        self.gauge.Pulse()
