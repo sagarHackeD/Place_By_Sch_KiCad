@@ -21,7 +21,12 @@
 2. Open the PCB Editor.
 3. Run the plugin from the Tools > External Plugins menu (or via the plugin manager).
 4. The plugin will automatically arrange footprints according to their positions in the schematic.
-
+
+## Limitations
+
+1. currently doesent suppoprt copy of hirachical sheets.
+
+
 
 ## License
 
@@ -35,4 +40,5 @@ Contributions, issues, and feature requests are welcome! Feel free to open an is
 
 
 **Author:** [sagarHackeD](https://github.com/sagarHackeD)
+
 
