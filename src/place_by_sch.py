@@ -37,11 +37,14 @@ class PlaceBySch(pcbnew.ActionPlugin):
 
         checkbox_values = dlg.get_checkbox_values()
 
+        self.custom_layer(board,pcbnew.User_15,"PlaceBySch")
+
+
         if result == 1:  # Advance
             # progress_dlg = ProgressDialog(None)
             # progress_dlg.ShowModal()
 
-            delete_drawings_from_layer(board, layer=pcbnew.Dwgs_User)
+            delete_drawings_from_layer(board, layer=pcbnew.User_15)
 
             data = pbs_plugin.sch_to_dict(pbs_plugin.get_sch_file_name())
             sorted_papers = sorted(
@@ -75,7 +78,7 @@ class PlaceBySch(pcbnew.ActionPlugin):
 
             dlg.gauge.Pulse()
 
-            delete_drawings_from_layer(board, layer=pcbnew.Dwgs_User)
+            delete_drawings_from_layer(board, layer=pcbnew.User_15)
 
             data = pbs_plugin.sch_to_dict(pbs_plugin.get_sch_file_name())
 
@@ -104,8 +107,38 @@ class PlaceBySch(pcbnew.ActionPlugin):
             # progress_dlg.Destroy()
 
         elif result == 3:
-            delete_drawings_from_layer(board, layer=pcbnew.Dwgs_User)
+            delete_drawings_from_layer(board, layer=pcbnew.User_15)
         else:  # Cancel
             pass
 
         dlg.Destroy()
+
+    def custom_layer(self, board,layer,name):
+        lset = board.GetEnabledLayers()
+        lset.AddLayer(layer)
+        board.SetEnabledLayers(lset)
+        board.SetLayerName(layer, name)
+
+
+
+
+
+
+#         import pcbnew
+
+# board = pcbnew.GetBoard()
+
+# # Get current enabled layers
+# lset = board.GetEnabledLayers()
+
+# # Enable a user layer
+# lset.AddLayer(pcbnew.User_1)
+
+# # Apply back to board
+# board.SetEnabledLayers(lset)
+
+# # Rename it
+# board.SetLayerName(pcbnew.User_1, "My_Custom_Layer")
+
+# pcbnew.Refresh()
+

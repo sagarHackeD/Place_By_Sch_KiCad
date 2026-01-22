@@ -1,3 +1,5 @@
+"""MaxRects bin packing algorithm implementation."""
+
 from dataclasses import dataclass
 from typing import Optional
 

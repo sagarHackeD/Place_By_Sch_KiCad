@@ -1,3 +1,5 @@
+"""get paper dimensions in mm"""
+
 from .wx_gui import debug_msg
 
 

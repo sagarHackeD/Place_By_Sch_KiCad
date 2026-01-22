@@ -48,6 +48,11 @@ class ActionDialog(wx.Dialog):
         # self.progress = wx.Gauge(self, range=100, style=wx.GA_HORIZONTAL)
         # vbox.Add(self.progress, 0, wx.EXPAND | wx.ALL, 10)
 
+        # choices = ["Apple", "Banana", "Orange", "Mango"]
+        # self.dropdown = wx.Choice(self, choices=choices)
+
+        # vbox.Add(self.dropdown, 0, wx.CENTER)
+
         self.gauge = wx.Gauge(self, range=100)
         vbox.Add(self.gauge, flag=wx.ALL | wx.CENTER | wx.EXPAND, border=10)
 
@@ -104,6 +109,10 @@ class CheckListDialog(wx.Dialog):
         size=(300, 500),
     ):
         super().__init__(parent, title=title, size=size)
+
+        icon = wx.Icon(os.path.join(os.path.dirname(__file__), "icon.png"), wx.BITMAP_TYPE_PNG)
+        self.SetIcon(icon)
+
         choices = choices or []
 
         vbox = wx.BoxSizer(wx.VERTICAL)

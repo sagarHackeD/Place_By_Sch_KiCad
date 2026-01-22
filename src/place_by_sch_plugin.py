@@ -96,7 +96,7 @@ class PlaceBySchPlugin:
         selected_sheets=None,
         checkbox_values=None,
         advance_mode=False,
-        layer=pcbnew.Dwgs_User,
+        layer=pcbnew.User_15,
     ):
         """place_footprints"""
 

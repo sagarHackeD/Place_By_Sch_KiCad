@@ -3,7 +3,7 @@ import pcbnew
 from .compatibility import VECTORIZE_MM
 
 
-def draw_a_page(board, w, h, x, y, layer=pcbnew.Dwgs_User):
+def draw_a_page(board, w, h, x, y, layer=pcbnew.User_15):
     """draw a rectangle"""
 
     page_height = h
@@ -20,7 +20,7 @@ def draw_a_page(board, w, h, x, y, layer=pcbnew.Dwgs_User):
     rect.SetWidth(pcbnew.FromMM(0.15))
     board.Add(rect)
 
-def add_page_title(board, x, y, title="", layer=pcbnew.Dwgs_User):
+def add_page_title(board, x, y, title="", layer=pcbnew.User_15):
     """Add a page title text to the PCB at each page."""
 
     text = pcbnew.PCB_TEXT(board)
