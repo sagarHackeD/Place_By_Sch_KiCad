@@ -170,3 +170,4 @@ package_dir/generate_metadata.py
 kicad-package.zip
 output/
 KiCad_plugin_builder/
+data.json
